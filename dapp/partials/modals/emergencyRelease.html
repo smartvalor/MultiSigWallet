@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h3 class="modal-title">
+    Send emergency release transaction
+  </h3>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label for="ValorTimeLock">ValorTimeLock address</label>
+    <textarea id="ValorTimeLock" class="form-control" rows="1" ng-model="tx"></textarea>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="emergencyRelease()">
+    Send
+  </button>
+  <button class="btn btn-danger" ng-click="cancel()">
+    Cancel
+  </button>
+</div>
