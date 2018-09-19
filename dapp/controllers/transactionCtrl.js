@@ -104,6 +104,16 @@
         });
       };
 
+      // Added by acostarodrigo
+      // the SmartValor will request from the multisig the emergency transfer
+      $scope.emergencyRelease = function () {
+        $uibModal.open({
+          templateUrl: 'partials/modals/emergencyRelease.html',
+          size: 'lg',
+          controller: 'emergencyReleaseCtrl'
+        });
+      };
+
       $scope.getNonce = function () {
         $uibModal.open({
           templateUrl: 'partials/modals/getNonce.html',
