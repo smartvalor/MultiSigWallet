@@ -642,6 +642,24 @@
         });
       };
 
+
+      $scope.addEmergencyPull = function () {
+        $uibModal.open({
+          templateUrl: 'partials/modals/walletEmergencyPullOperation.html',
+          size: 'lg',
+          resolve: {
+            wallet: function () {
+              return $scope.wallet;
+            }
+          },
+          controller: 'walletTransactionCtrl'
+        });
+      };
+
+
+
+
+
       $scope.addToken = function () {
         $uibModal.open({
           templateUrl: 'partials/modals/editToken.html',

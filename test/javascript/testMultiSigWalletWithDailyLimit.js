@@ -17,6 +17,7 @@ contract('MultiSigWalletWithDailyLimit', (accounts) => {
         assert.ok(multisigInstance)
     })
 
+
     it('create multisig', async () => {
         const deposit = 10000
         

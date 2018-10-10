@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h3 class="modal-title">
+    Emergency Pull Request
+  </h3>
+</div>
+<form class="form" name="form">
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="destination">Stake address</label>
+      <input id="destination" type="text" ng-model="tx.to" ng-change="updateABI()"  ng-min="40" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+      <label for="abi"> ABI string </label>
+      <textarea id="abi" rows="5" type="text" class="form-control" ng-model="abi" ng-change="updateMethods()" ng-required="!tx.value"></textarea>
+    </div>
+
+    
+  <div class="modal-footer">
+    <button type="button" ng-click="send()" class="btn btn-default" ng-disabled="form.$invalid"
+      disabled-if-invalid-address="{{tx.to}}"
+      show-hide-by-connectivity="online">
+      Trigger Emergency Release
+    </button>
+    <button type="button" ng-click="signOff()" class="btn btn-default" ng-disabled="form.$invalid" show-hide-by-connectivity="offline">
+      Sign offline
+    </button>
+    <button type="button" ng-click="cancel()" class="btn btn-danger">
+      Cancel
+    </button>
+  </div>
+</form>
