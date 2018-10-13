@@ -140,74 +140,39 @@
 </div>
 -->
 
-<!-- Operations panel -->
+<!-- Stake Factory Operations panel -->
 <div class="panel panel-default">
   <div class="panel-heading">
-    <div class="pull-right">
-
-        <div class="pull-right form-inline">
-          <button type="button" class="btn btn-default" disabled-if-no-accounts
-          ng-click="addEmergencyPull()">
-          Emergency Pull
-        </button>
-    </div>
+    <div class="pull-right form-inline">
+      <button type="button" class="btn btn-default" disabled-if-no-accounts
+      ng-click="addStakeFactoryTransaction()">
+        Admin request
+      </button>
+      
+      
     </div>
     <h4>
-      Stake Management
+      Stake Factory Admin Operation
     </h4>
-
   </div>
-  <!--
-  <table class="table table-hover table-bordered table-striped" uib-collapse="hideTokens">
-    <thead>
-      <tr>
-        <th>
-          Name
-        </th>
-        <th>
-          Multisig balance
-        </th>
-        <th>
-          Account balance
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="token in wallet.tokens track by $index">
-        <td>
-          {{token.name}}
-          <div class="pull-right">
-            <button type="button" class="btn btn-default btn-sm"
-            ng-click="editToken(token)">
-              Edit
-            </button>
-            <button type="button" class="btn btn-danger btn-sm"
-            ng-click="removeToken(token)">
-              Remove
-            </button>
-          </div>
-        </td>
-        <td>
-          {{token|token}}
-          <div class="pull-right">
-            <button type="button" class="btn btn-default btn-sm" disabled-if-no-accounts
-            ng-click="depositToken(token)">
-              Deposit
-            </button>
-            <button type="button" class="btn btn-default btn-sm" disabled-if-no-accounts
-            ng-click="withdrawToken(token)">
-              Withdraw
-            </button>
-          </div>
-        </td>
-        <td>
-          {{userTokens[token.address]|token}}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+</div>
 
--->
+<!-- Stake Release panel -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="pull-right form-inline">
+      <button type="button" class="btn btn-default" disabled-if-no-accounts
+      ng-click="emergencyRelease()">
+        Stake release
+      </button>
+      
+      
+    </div>
+    <h4>
+      Stake Emergency Release Request
+    </h4>
+  </div>
+</div>
 
 </div>
 

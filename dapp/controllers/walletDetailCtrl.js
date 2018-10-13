@@ -643,19 +643,32 @@
       };
 
 
-      $scope.addEmergencyPull = function () {
+      $scope.addStakeFactoryTransaction = function () {
         $uibModal.open({
-          templateUrl: 'partials/modals/walletEmergencyPullOperation.html',
+          templateUrl: 'partials/modals/stakeFactoryTransaction.html',
           size: 'lg',
           resolve: {
             wallet: function () {
               return $scope.wallet;
             }
           },
-          controller: 'walletTransactionCtrl'
+          controller: 'stakeFactoryTransactionCtrl'
         });
       };
 
+
+      $scope.emergencyRelease = function () {
+        $uibModal.open({
+          templateUrl: 'partials/modals/emergencyRelease.html',
+          size: 'lg',
+          resolve: {
+            wallet: function () {
+              return $scope.wallet;
+            }
+          },
+          controller: 'emergencyReleaseCtrl'
+        });
+      };
 
 
 
