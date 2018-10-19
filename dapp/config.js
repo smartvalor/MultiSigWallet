@@ -180,3 +180,337 @@ function loadConfiguration () {
 
 checkWalletFactoryAddress();
 loadConfiguration();
+
+
+//added for stake factory 
+var stakeFactoryABI = [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "token",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_tokenAddress",
+          "type": "address"
+        },
+        {
+          "name": "companyWallet",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "stake",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "beneficiary",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "lockPeriod",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "atStake",
+          "type": "uint256"
+        }
+      ],
+      "name": "StakeCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Pause",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Unpause",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "previousOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipRenounced",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "lockPeriod",
+          "type": "uint256"
+        },
+        {
+          "name": "atStake",
+          "type": "uint256"
+        }
+      ],
+      "name": "createStake",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "dismiss",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ];
+
+var stakeABI = [
+   {
+     "constant": true,
+     "inputs": [],
+     "name": "beneficiary",
+     "outputs": [
+       {
+         "name": "",
+         "type": "address"
+       }
+     ],
+     "payable": false,
+     "stateMutability": "view",
+     "type": "function"
+   },
+   {
+     "constant": true,
+     "inputs": [],
+     "name": "owner",
+     "outputs": [
+       {
+         "name": "",
+         "type": "address"
+       }
+     ],
+     "payable": false,
+     "stateMutability": "view",
+     "type": "function"
+   },
+   {
+     "constant": true,
+     "inputs": [],
+     "name": "releaseTime",
+     "outputs": [
+       {
+         "name": "",
+         "type": "uint256"
+       }
+     ],
+     "payable": false,
+     "stateMutability": "view",
+     "type": "function"
+   },
+   {
+     "constant": true,
+     "inputs": [],
+     "name": "token",
+     "outputs": [
+       {
+         "name": "",
+         "type": "address"
+       }
+     ],
+     "payable": false,
+     "stateMutability": "view",
+     "type": "function"
+   },
+   {
+     "inputs": [
+       {
+         "name": "_token",
+         "type": "address"
+       },
+       {
+         "name": "_beneficiary",
+         "type": "address"
+       },
+       {
+         "name": "_admin",
+         "type": "address"
+       },
+       {
+         "name": "duration",
+         "type": "uint256"
+       }
+     ],
+     "payable": false,
+     "stateMutability": "nonpayable",
+     "type": "constructor"
+   },
+   {
+     "anonymous": false,
+     "inputs": [
+       {
+         "indexed": false,
+         "name": "from",
+         "type": "address"
+       },
+       {
+         "indexed": false,
+         "name": "to",
+         "type": "address"
+       },
+       {
+         "indexed": false,
+         "name": "value",
+         "type": "uint256"
+       }
+     ],
+     "name": "EmergencyRelease",
+     "type": "event"
+   },
+   {
+     "constant": false,
+     "inputs": [],
+     "name": "release",
+     "outputs": [],
+     "payable": false,
+     "stateMutability": "nonpayable",
+     "type": "function"
+   },
+   {
+     "constant": false,
+     "inputs": [
+       {
+         "name": "amount",
+         "type": "uint256"
+       }
+     ],
+     "name": "partialRelease",
+     "outputs": [],
+     "payable": false,
+     "stateMutability": "nonpayable",
+     "type": "function"
+   },
+   {
+     "constant": false,
+     "inputs": [],
+     "name": "emergencyRelease",
+     "outputs": [],
+     "payable": false,
+     "stateMutability": "nonpayable",
+     "type": "function"
+   }
+ ];

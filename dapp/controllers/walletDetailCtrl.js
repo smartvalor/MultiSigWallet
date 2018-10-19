@@ -642,6 +642,37 @@
         });
       };
 
+
+      $scope.addStakeFactoryTransaction = function () {
+        $uibModal.open({
+          templateUrl: 'partials/modals/stakeFactoryTransaction.html',
+          size: 'lg',
+          resolve: {
+            wallet: function () {
+              return $scope.wallet;
+            }
+          },
+          controller: 'stakeFactoryTransactionCtrl'
+        });
+      };
+
+
+      $scope.emergencyRelease = function () {
+        $uibModal.open({
+          templateUrl: 'partials/modals/emergencyRelease.html',
+          size: 'lg',
+          resolve: {
+            wallet: function () {
+              return $scope.wallet;
+            }
+          },
+          controller: 'emergencyReleaseCtrl'
+        });
+      };
+
+
+
+
       $scope.addToken = function () {
         $uibModal.open({
           templateUrl: 'partials/modals/editToken.html',

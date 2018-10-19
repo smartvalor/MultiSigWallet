@@ -68,7 +68,7 @@
     </tbody>
   </table>
 </div>
-<!-- Tokens panel -->
+<!-- Tokens panel 
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="pull-right">
@@ -138,6 +138,45 @@
     No tokens. Add an ERC20 token <a href="" ng-click="addToken()">now</a>.
   </div>
 </div>
+-->
+
+<!-- Stake Factory Operations panel -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="pull-right form-inline">
+      <button type="button" class="btn btn-default" disabled-if-no-accounts
+      ng-click="addStakeFactoryTransaction()">
+        Admin request
+      </button>
+      
+      
+    </div>
+    <h4>
+      Stake Factory Admin Operation
+    </h4>
+  </div>
+</div>
+
+<!-- Stake Release panel -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="pull-right form-inline">
+      <button type="button" class="btn btn-default" disabled-if-no-accounts
+      ng-click="emergencyRelease()">
+        Stake release
+      </button>
+      
+      
+    </div>
+    <h4>
+      Stake Emergency Release Request
+    </h4>
+  </div>
+</div>
+
+</div>
+
+
 <!-- Multisig transactions panel -->
 <div class="panel panel-default">
   <div class="panel-heading">
