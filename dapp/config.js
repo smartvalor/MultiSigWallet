@@ -182,8 +182,22 @@ checkWalletFactoryAddress();
 loadConfiguration();
 
 
-//added for stake factory 
+//added for stake factory
 var stakeFactoryABI = [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "minStake",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
     {
       "constant": false,
       "inputs": [],
@@ -214,6 +228,20 @@ var stakeFactoryABI = [
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "minLockPeriod",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -256,6 +284,20 @@ var stakeFactoryABI = [
     {
       "constant": true,
       "inputs": [],
+      "name": "dismissed",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
       "name": "token",
       "outputs": [
         {
@@ -274,7 +316,7 @@ var stakeFactoryABI = [
           "type": "address"
         },
         {
-          "name": "companyWallet",
+          "name": "_companyWallet",
           "type": "address"
         }
       ],
@@ -286,12 +328,12 @@ var stakeFactoryABI = [
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "name": "stake",
           "type": "address"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "name": "beneficiary",
           "type": "address"
         },
@@ -307,6 +349,12 @@ var stakeFactoryABI = [
         }
       ],
       "name": "StakeCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "FactoryDismiss",
       "type": "event"
     },
     {
@@ -354,11 +402,11 @@ var stakeFactoryABI = [
       "constant": false,
       "inputs": [
         {
-          "name": "lockPeriod",
-          "type": "uint256"
+          "name": "_lockPeriod",
+          "type": "uint32"
         },
         {
-          "name": "atStake",
+          "name": "_atStake",
           "type": "uint256"
         }
       ],
@@ -371,10 +419,89 @@ var stakeFactoryABI = [
     {
       "constant": false,
       "inputs": [],
+      "name": "withdraw",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
       "name": "dismiss",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_minStake",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinStake",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_minLockPeriod",
+          "type": "uint32"
+        }
+      ],
+      "name": "setMinLockPeriod",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_beneficiary",
+          "type": "address"
+        }
+      ],
+      "name": "countByBeneficiary",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_beneficiary",
+          "type": "address"
+        },
+        {
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "lookupByBeneficiary",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     }
   ];
