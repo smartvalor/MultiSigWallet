@@ -19,7 +19,7 @@
 
 
       //stake factory addr
-      $scope.tx.to = "0x4bd1cc20e97cbaa12365078cf292ef17d105860b";
+      $scope.tx.to = "0x3f2307f9d59302405ea73c350342e3d1bdd9f5a0";
 
 
       $scope.abi = JSON.stringify(stakeFactoryABI);
