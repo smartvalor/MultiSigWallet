@@ -2,10 +2,10 @@
   function () {
     angular
     .module("multiSigWeb")
-    .service("Token", function (Wallet, Web3Service) {
+    .service("BurnableToken", function (Wallet, Web3Service) {
       var factory = {};
 
-      factory.abi = abiJSON.token.abi;
+      factory.abi = abiJSON.burnableToken.abi;
 
       factory.balanceOf = function (address, owner, cb) {
         var instance = Web3Service.web3.eth.contract(factory.abi).at(address);
@@ -59,6 +59,9 @@
         );
       };
 
+
+
+
       factory.transferOffline = function (tokenAddress, to, value, cb) {
         var instance = Web3Service.web3.eth.contract(factory.abi).at(tokenAddress);
         var data = instance.transfer.getData(to, value);
@@ -104,6 +107,39 @@
           }
         }).call();
       };
+
+
+      factory.burn = function (tokenAddress, wallet, value, options, cb) {
+        var walletInstance = Web3Service.web3.eth.contract(Wallet.json.multiSigDailyLimit.abi).at(wallet);
+        var tokenInstance = Web3Service.web3.eth.contract(factory.abi).at(tokenAddress);
+        var data = tokenInstance.burn.getData(
+          value
+        );
+        // Get nonce
+        Wallet.getTransactionCount(wallet, true, true, function (e, count) {
+          if (e) {
+            cb(e);
+          }
+          else {
+        
+            Web3Service.configureGas(Wallet.txDefaults({gas: 500000}), function (gasOptions){
+              walletInstance.submitTransaction(
+                tokenAddress, 
+                "0x0", 
+                data, 
+                count, 
+                Wallet.txDefaults({
+                  gas: gasOptions.gas,
+                  gasPrice: gasOptions.gasPrice
+                }), 
+                options, 
+                cb);
+            });
+          }
+        }).call();
+      };
+
+
 
 
       factory.withdrawOffline = function (tokenAddress, wallet, to, value, cb) {
