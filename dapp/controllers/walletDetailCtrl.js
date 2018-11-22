@@ -2,7 +2,19 @@
   function () {
     angular
     .module("multiSigWeb")
-    .controller("walletDetailCtrl", function (Web3Service, $scope, $filter, $sce, Wallet, $routeParams, Utils, Transaction, $interval, $uibModal, Token, ABI) {
+    .controller("walletDetailCtrl", function (
+      Web3Service, 
+      $scope, 
+      $filter, 
+      $sce, 
+      Wallet, 
+      $routeParams, 
+      Utils, 
+      Transaction, 
+      $interval, 
+      $uibModal, 
+      Token, 
+      ABI) {
       $scope.wallet = {};
 
       $scope.$watch(
@@ -57,7 +69,7 @@
       $scope.totalItems = 0;
       $scope.showTxs = "all";
       $scope.hideOwners = true;
-      $scope.hideTokens = false;
+      $scope.hideTokens = true;
 
       $scope.updateParams = function () {
 
@@ -767,6 +779,22 @@
           },
           controller: 'withdrawTokenCtrl'
         });
+      };
+
+      $scope.burnToken = function(token){
+        $uibModal.open({
+          templateUrl: 'partials/modals/burnToken.html',
+          size: 'md',
+          resolve: {
+            wallet: function () {
+              return $scope.wallet;
+            },
+            token: function () {
+              return token;
+            }
+          },
+          controller: 'burnTokensCtrl'
+        });        
       };
 
       $scope.editABI = function (to) {

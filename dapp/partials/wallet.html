@@ -127,6 +127,10 @@
             ng-click="withdrawToken(T)">
               Withdraw
             </button>
+            <button type="button" class="btn btn-default btn-sm" disabled-if-no-accounts
+              ng-click="burnToken(T)">
+              Burn
+            </button>
           </div>
         </td>
         <td>
@@ -155,7 +159,7 @@
       </button>
     </div>
     <h4>
-      Tokens
+      Other Tokens
     </h4>
   </div>
   <table class="table table-hover table-bordered table-striped" uib-collapse="hideTokens">
@@ -185,6 +189,7 @@
             ng-click="removeToken(token)">
               Remove
             </button>
+
           </div>
         </td>
         <td>
