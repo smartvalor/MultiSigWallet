@@ -30,23 +30,10 @@
                     
           Object.assign(walletCopy, $scope.wallet);
           $scope.wallet = walletCopy;
-          $scope.valorToken = {
-            'address': '0x6e748fe8f1f344ce557bfdbf29c085aa0dff73b9',
-            'name': 'ValorToken (mockup)',
-            'symbol': 'VALORmock',
-            'decimals': 18,
-
-          };
-          
           
           $scope.totalTokens = Object.keys($scope.wallet.tokens).length;
         }
       );
-
-  
-
-
-
       // Get wallet balance, nonce, transactions, owners
       $scope.owners = [];
       $scope.transactions = {};
@@ -57,7 +44,7 @@
       $scope.totalItems = 0;
       $scope.showTxs = "all";
       $scope.hideOwners = true;
-      $scope.hideTokens = false;
+      $scope.hideTokens = true;
 
       $scope.updateParams = function () {
 
