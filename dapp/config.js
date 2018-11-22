@@ -1,3 +1,11 @@
+var valorToken =  {
+      'address': '0x6e748fe8f1f344ce557bfdbf29c085aa0dff73b9',
+      'name': 'ValorToken (mockup)',
+      'symbol': 'VALORmock',
+      'decimals': 18
+};
+
+
 var txDefaultOrig =
 {
   gasLimit: 3141592,
@@ -16,6 +24,10 @@ var txDefaultOrig =
 
 
   tokens: [
+    valorToken,
+
+
+
     {
       'address': '0x6810e776880c02933d47db1b9fc05908e5386b96',
       'name': 'Gnosis',

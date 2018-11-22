@@ -102,35 +102,35 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="token in wallet.valorTokens track by $index">
+      <tr ng-repeat="T in [valorToken]">
         <td>
-          {{token.name}}
+          {{T.name}}
           <div class="pull-right">
             <button type="button" class="btn btn-default btn-sm"
-            ng-click="editToken(token)">
+            ng-click="editToken(T)">
               Edit
             </button>
             <button type="button" class="btn btn-danger btn-sm"
-            ng-click="removeToken(token)">
+            ng-click="removeToken(T)">
               Remove
             </button>
           </div>
         </td>
         <td>
-          {{token|token}}
+          {{wallet.tokens[T.address]|token}}
           <div class="pull-right">
             <button type="button" class="btn btn-default btn-sm" disabled-if-no-accounts
-            ng-click="depositToken(token)">
+            ng-click="depositToken(T)">
               Deposit
             </button>
             <button type="button" class="btn btn-default btn-sm" disabled-if-no-accounts
-            ng-click="withdrawToken(token)">
+            ng-click="withdrawToken(T)">
               Withdraw
             </button>
           </div>
         </td>
         <td>
-          {{userTokens[token.address]|token}}
+          {{userTokens[T.address]|token}}
         </td>
       </tr>
     </tbody>
