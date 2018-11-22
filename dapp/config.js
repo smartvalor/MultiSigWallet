@@ -1,3 +1,11 @@
+var valorToken =  {
+      'address': '0x6e748fe8f1f344ce557bfdbf29c085aa0dff73b9',
+      'name': 'ValorToken (mockup)',
+      'symbol': 'VALORmock',
+      'decimals': 18
+};
+
+
 var txDefaultOrig =
 {
   gasLimit: 3141592,
@@ -13,7 +21,13 @@ var txDefaultOrig =
   defaultChainID: null,
   // Mainnet
   walletFactoryAddress: "0x6e95c8e8557abc08b46f3c347ba06f8dc012763f",
+
+
   tokens: [
+    valorToken,
+
+
+
     {
       'address': '0x6e748fe8f1f344ce557bfdbf29c085aa0dff73b9',
       'name': 'ValorToken (mockup)',
