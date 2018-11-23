@@ -44,7 +44,7 @@
       $scope.totalItems = 0;
       $scope.showTxs = "all";
       $scope.hideOwners = true;
-      $scope.hideTokens = true;
+      $scope.hideTokens = false;
 
       $scope.updateParams = function () {
 
