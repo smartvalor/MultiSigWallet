@@ -12,14 +12,13 @@ run:
     - |
       set -ex
       cwd="$(pwd)"
-      cp -faT app-repo app-prepared
       export npm_config_cache=".npm"
       npm set progress=false
-      cd app-prepared
+      cd app-repo
         npm install
         ls -al dapp/
       cd $cwd
-      cp -fa app-prepared/Dockerfile app-build/
-      cp -fa app-prepared/dapp/ app-build/
+      cp -fa app-repo/Dockerfile app-build/
+      cp -fa app-repo/dapp/ app-build/
       mkdir -p app-build/.git/
-      cp -fa app-prepared/.git/ref app-build/.git/
+      cp -fa app-repo/.git/ref app-build/.git/
