@@ -199,7 +199,7 @@ resources:
     source:
       uri: git@github.com:smartvalor/MultiSigWallet.git
 #      branch: master
-      branch: SVN-3337/add-ci-pipeline
+      branch: SVN-3337/add-CI-pipeline
       private_key: ((dev-cloud.ci-bot.github.git-key))
   - name: multisigwallet-repo-pr
     type: pull-request
