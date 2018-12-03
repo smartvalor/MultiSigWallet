@@ -6,6 +6,8 @@ WORKDIR /srv/app
 ADD .git /.app-version
 ADD . /srv/app
 
+ls -al /srv/app/dapp/
+
 EXPOSE 8282
 
 USER node
