@@ -228,7 +228,7 @@ resources:
     type: docker-image
     source:
       repository: ((dev-cloud.docker-registry.host))/devops/multisigwallet
-      tag: 10-alpine
+      tag: 8-alpine
 #  - name: team-alert
 #    type: slack-alert
 #    source:
