@@ -17,6 +17,7 @@ run:
       npm set unsafe-perm true
       cd app-repo
         npm install
+        ls -al dapp/
       cd $cwd
       cp -fa app-repo/Dockerfile app-build/
       cp -fa app-repo/dapp/ app-build/
