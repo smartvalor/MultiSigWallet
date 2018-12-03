@@ -6,7 +6,7 @@ WORKDIR /srv/app
 ADD .git /.app-version
 ADD . /srv/app
 
-ls -al /srv/app/dapp/
+RUN ls -al /srv/app/dapp/
 
 EXPOSE 8282
 
