@@ -82,3 +82,4 @@ dapp/localhost.key
 /.blackbox-prod/pubring.kbx~
 /.blackbox-prod/secring.gpg
 /ci/values/uat/charts/values-secrets.yaml
+/ci/values/prod/charts/values-secrets.yaml
