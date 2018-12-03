@@ -17,6 +17,6 @@ run:
         npm install
       cd "${cwd}"
       cp -fa app-repo/Dockerfile app-build/
-      cp -fa app-repo/dist/ app-build/
+      cp -fa app-repo/dapp/ app-build/
       mkdir -p app-build/.git/
       cp -fa app-repo/.git/ref app-build/.git/
