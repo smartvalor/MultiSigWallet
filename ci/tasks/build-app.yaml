@@ -15,7 +15,7 @@ run:
       export npm_config_cache=".npm"
       npm set progress=false
       cd app-repo
-        npm install
+        npm ci
       cd $cwd
       cp -fa app-repo/Dockerfile app-build/
       cp -fa app-repo/dapp/ app-build/
