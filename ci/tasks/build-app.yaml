@@ -3,8 +3,8 @@ inputs:
   - name: app-repo
 outputs:
   - name: app-build
-#caches:
-#  - path: .npm
+caches:
+  - path: .npm
 run:
   path: sh
   args:
@@ -12,7 +12,7 @@ run:
     - |
       set -ex
       cwd="$(pwd)"
-      #export npm_config_cache=".npm"
+      export npm_config_cache=".npm"
       npm set progress=false
       npm set unsafe-perm true
       cd app-repo
