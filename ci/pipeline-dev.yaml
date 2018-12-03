@@ -179,7 +179,7 @@ jobs:
           NAMESPACE: ((dev-cloud.dev.kubernetes-namespace))
           RELEASE_NAME: uat-multisigwallet
           CHART_NAME: multisigwallet
-          APP_ENV: dev
+          APP_ENV: uat
       - <<: *docker-image-tags
         params:
           TAG: uat-latest
