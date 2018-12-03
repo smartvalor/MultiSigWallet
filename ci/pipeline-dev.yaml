@@ -94,14 +94,11 @@ jobs:
               save: true
             trigger: true
           - get: ci-tools
-      - task: prepare-app
-        image: base-image
-        file: multisigwallet-repo/ci/tasks/prepare-app.yaml
-        input_mapping:
-          app-repo: multisigwallet-repo
       - task: build-app
         image: base-image
         file: multisigwallet-repo/ci/tasks/build-app.yaml
+        input_mapping:
+          app-repo: multisigwallet-repo
       - <<: &docker-image-tags
           task: docker-image-tags
           image: ci-tools
@@ -201,7 +198,8 @@ resources:
     type: git
     source:
       uri: git@github.com:smartvalor/MultiSigWallet.git
-      branch: master
+#      branch: master
+      branch: SVN-3337/add-ci-pipeline
       private_key: ((dev-cloud.ci-bot.github.git-key))
   - name: multisigwallet-repo-pr
     type: pull-request

@@ -1,8 +1,10 @@
 platform: linux
 inputs:
-  - name: app-prepared
+  - name: app-repo
 outputs:
   - name: app-build
+caches:
+  - path: .npm
 run:
   path: sh
   args:
@@ -10,10 +12,11 @@ run:
     - |
       set -ex
       cwd="$(pwd)"
-      cd app-prepared
-        npm run prod:build -- --progress false
+      export npm_config_cache="$(pwd)/.npm"
+      cd app-repo
+        npm install
       cd "${cwd}"
-      cp -fa app-prepared/Dockerfile app-build/
-      cp -fa app-prepared/dist/ app-build/
+      cp -fa app-repo/Dockerfile app-build/
+      cp -fa app-repo/dist/ app-build/
       mkdir -p app-build/.git/
-      cp -fa app-prepared/.git/ref app-build/.git/
+      cp -fa app-repo/.git/ref app-build/.git/
