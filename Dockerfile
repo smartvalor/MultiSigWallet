@@ -4,7 +4,7 @@ LABEL maintainer="smartvalor.com"
 WORKDIR /srv/app
 
 COPY .git /.app-version
-COPY dist $WORK_DIR
+COPY dapp .
 
 EXPOSE 8282
 

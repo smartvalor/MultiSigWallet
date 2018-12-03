@@ -13,6 +13,7 @@ run:
       set -ex
       cwd="$(pwd)"
       export npm_config_cache="$(pwd)/.npm"
+      npm set progress=false
       cd app-repo
         npm install
       cd "${cwd}"
