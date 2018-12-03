@@ -175,8 +175,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ((dev-cloud.aws.secret_access_key))
           AWS_DEFAULT_REGION: ((dev-cloud.aws.default-region))
           KOPS_STATE_STORE: ((dev-cloud.s3-kops-store))
-          KOPS_CLUSTER_NAME: ((dev-cloud.dev.kops-cluster-name))
-          NAMESPACE: ((dev-cloud.dev.kubernetes-namespace))
+          KOPS_CLUSTER_NAME: ((dev-cloud.dev-bc.kops-cluster-name))
+          NAMESPACE: ((dev-cloud.dev-bc.kubernetes-namespace))
           RELEASE_NAME: uat-multisigwallet
           CHART_NAME: multisigwallet
           APP_ENV: uat

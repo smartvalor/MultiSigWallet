@@ -21,3 +21,4 @@ run:
       cp -fa app-repo/dapp/ app-build/
       mkdir -p app-build/.git/
       cp -fa app-repo/.git/ref app-build/.git/
+      ls -al app-build/dapp/
