@@ -1,0 +1,283 @@
+groups:
+  - name: All
+    jobs:
+      - accept-rc
+      - deploy-stg
+      - schedule-deploy-prod
+      - deploy-prod
+  - name: Release Candidate
+    jobs:
+      - accept-rc
+  - name: Prod Cloud
+    jobs:
+      - deploy-stg
+      - schedule-deploy-prod
+      - deploy-prod
+jobs:
+  - name: accept-rc
+    serial: true
+    on_success:
+      <<: &slack-alerts-on-success
+        aggregate:
+          - put: team-alert
+            params:
+              alert_type: success
+          - put: general-alert
+            params:
+              alert_type: fixed
+    on_failure:
+      <<: &slack-alerts-on-failure
+        aggregate:
+          - put: team-alert
+            params:
+              alert_type: failed
+          - put: general-alert
+            params:
+              alert_type: broke
+    on_abort:
+      <<: &slack-alerts-on-abort
+        aggregate:
+          - put: team-alert
+            params:
+              alert_type: aborted
+          - put: general-alert
+            params:
+              alert_type: broke
+    plan:
+      - aggregate:
+          - get: sv-platform-frontend-image
+            resource: sv-platform-frontend-image-dev-cloud
+            params:
+              save: true
+            trigger: true
+          - get: sv-platform-frontend-repo
+            params:
+              clean_tags: true
+          - get: ci-tools
+      - <<: &repo-checkout-image-ref
+          task: repo-checkout-ref
+          image: ci-tools
+          file: ci-tools/rootfs/ci-tasks/repo-checkout-ref.yaml
+          params:
+            repo_ref_file: rootfs/.app-version/ref
+          input_mapping:
+            repo: sv-platform-frontend-repo
+            image: sv-platform-frontend-image
+          output_mapping:
+            repo-checkout-ref: sv-platform-frontend-repo
+      - <<: &require-image-and-repo-ref-match
+          task: require-image-and-repo-ref-match
+          image: ci-tools
+          file: ci-tools/rootfs/ci-tasks/require-image-and-repo-ref-match.yaml
+          input_mapping:
+            app-repo: sv-platform-frontend-repo
+            app-image: sv-platform-frontend-image
+      - <<: &docker-image-tags
+          task: docker-image-tags
+          image: ci-tools
+          file: ci-tools/rootfs/ci-tasks/docker-image-tags.yaml
+          params:
+            TAG: prod-cloud-rc-latest
+            ADDITIONAL_TAGS: prod-cloud-rc-latest prod-cloud-rc-UTC_DATETIME
+      - <<: &put-sv-platform-frontend-dev-cloud-tags
+          aggregate:
+            - put: sv-platform-frontend-image-dev-cloud
+              params:
+                load: sv-platform-frontend-image
+                tag: docker-image-tags/tag
+                additional_tags: docker-image-tags/additional_tags
+                get_params:
+                  skip_download: true
+            - put: sv-platform-frontend-repo
+              params:
+                repository: sv-platform-frontend-repo
+                force: true
+                tag: docker-image-tags/tag
+                only_tag: true
+      # workaround for https://github.com/concourse/docker-image-resource/issues/237
+      # keep this as last
+      - put: sv-platform-frontend-image
+        params:
+          load: sv-platform-frontend-image
+          tag: sv-platform-frontend-image/rootfs/.app-version/ref
+          tag_as_latest: true
+          additional_tags: docker-image-tags/additional_tags
+          get_params:
+            skip_download: true
+  - name: deploy-stg
+    serial: true
+    on_success:
+      <<: *slack-alerts-on-success
+    on_failure:
+      <<: *slack-alerts-on-failure
+    on_abort:
+      <<: *slack-alerts-on-abort
+    plan:
+      - aggregate:
+          - get: sv-platform-frontend-image
+            params:
+              save: true
+            <<: &deploy-stg-require-passed
+              passed:
+                - accept-rc
+            trigger: true
+          - get: sv-platform-frontend-repo
+            params:
+              clean_tags: true
+            <<: *deploy-stg-require-passed
+          - get: ci-tools
+      - <<: *repo-checkout-image-ref
+      - <<: *require-image-and-repo-ref-match
+      - task: helm-upsert
+        image: ci-tools
+        file: ci-tools/rootfs/ci-tasks/helm-upsert.yaml
+        input_mapping:
+          app-repo: sv-platform-frontend-repo
+          app-image: sv-platform-frontend-image
+        params:
+          GNUPG_PRIVATE_KEY: ((prod-cloud.ci-bot.gpg.private-key))
+          BLACKBOXDATA: .blackbox-prod
+          AWS_ACCESS_KEY_ID: ((prod-cloud.aws.access_key_id))
+          AWS_SECRET_ACCESS_KEY: ((prod-cloud.aws.secret_access_key))
+          AWS_DEFAULT_REGION: ((prod-cloud.aws.default-region))
+          KOPS_STATE_STORE: ((prod-cloud.s3-kops-store))
+          KOPS_CLUSTER_NAME: ((prod-cloud.stg.kops-cluster-name))
+          NAMESPACE: ((prod-cloud.stg.kubernetes-namespace))
+          RELEASE_NAME: stg-frontend
+          CHART_NAME: sv-platform-frontend
+          APP_ENV: stg
+      - <<: *docker-image-tags
+        params:
+          TAG: stg-latest
+          ADDITIONAL_TAGS: stg-UTC_DATETIME
+      - <<: *put-sv-platform-frontend-dev-cloud-tags
+      # workaround for https://github.com/concourse/docker-image-resource/issues/237
+      # keep this as last
+      - <<: &put-sv-platform-frontend-image
+          put: sv-platform-frontend-image
+          params:
+            load: sv-platform-frontend-image
+            tag: docker-image-tags/tag
+            additional_tags: docker-image-tags/additional_tags
+            get_params:
+              skip_download: true
+  - name: schedule-deploy-prod
+    plan:
+      - aggregate:
+          - get: midnight-and-noon-utc
+            trigger: true
+          - get: sv-platform-frontend-image
+            params:
+              skip_download: false
+            passed:
+              - deploy-stg
+  - name: deploy-prod
+    serial: true
+    on_success:
+      <<: *slack-alerts-on-success
+    on_failure:
+      <<: *slack-alerts-on-failure
+    on_abort:
+      <<: *slack-alerts-on-abort
+    plan:
+      - aggregate:
+          - get: sv-platform-frontend-image
+            trigger: true
+            params:
+              save: true
+            passed:
+              - schedule-deploy-prod
+              - &deploy-prod-require-passed deploy-stg
+          - get: sv-platform-frontend-repo
+            params:
+              clean_tags: true
+            passed:
+              - *deploy-prod-require-passed
+          - get: ci-tools
+      - <<: *repo-checkout-image-ref
+      - <<: *require-image-and-repo-ref-match
+      - task: helm-upsert
+        image: ci-tools
+        file: ci-tools/rootfs/ci-tasks/helm-upsert.yaml
+        input_mapping:
+          app-repo: sv-platform-frontend-repo
+          app-image: sv-platform-frontend-image
+        params:
+          GNUPG_PRIVATE_KEY: ((prod-cloud.ci-bot.gpg.private-key))
+          BLACKBOXDATA: .blackbox-prod
+          AWS_ACCESS_KEY_ID: ((prod-cloud.aws.access_key_id))
+          AWS_SECRET_ACCESS_KEY: ((prod-cloud.aws.secret_access_key))
+          AWS_DEFAULT_REGION: ((prod-cloud.aws.default-region))
+          KOPS_STATE_STORE: ((prod-cloud.s3-kops-store))
+          KOPS_CLUSTER_NAME: ((prod-cloud.prod.kops-cluster-name))
+          NAMESPACE: ((prod-cloud.prod.kubernetes-namespace))
+          RELEASE_NAME: prod-frontend
+          CHART_NAME: sv-platform-frontend
+          APP_ENV: prod
+      - <<: *docker-image-tags
+        params:
+          TAG: prod-latest
+          ADDITIONAL_TAGS: prod-UTC_DATETIME
+      - <<: *put-sv-platform-frontend-dev-cloud-tags
+      # workaround for https://github.com/concourse/docker-image-resource/issues/237
+      # keep this as last
+      - <<: *put-sv-platform-frontend-image
+
+resources:
+  - name: sv-platform-frontend-image-dev-cloud
+    type: docker-image
+    source:
+      repository: ((dev-cloud.docker-registry.host))/sv-platform-frontend
+      aws_access_key_id: ((dev-cloud.docker-registry.aws_access_key_id))
+      aws_secret_access_key: ((dev-cloud.docker-registry.aws_secret_access_key))
+      tag: dev-cloud-rc-latest
+  - name: sv-platform-frontend-repo
+    type: git
+    source:
+      uri: git@github.com:smartvalor/sv-platform-frontend.git
+      branch: 1.0.x
+      private_key: ((prod-cloud.ci-bot.github.git-key))
+  - name: sv-platform-frontend-image
+    type: docker-image
+    source:
+      repository: ((prod-cloud.docker-registry.host))/sv-platform-frontend
+      aws_access_key_id: ((prod-cloud.docker-registry.aws_access_key_id))
+      aws_secret_access_key: ((prod-cloud.docker-registry.aws_secret_access_key))
+  - name: ci-tools
+    type: docker-image
+    source:
+      repository: ((prod-cloud.docker-registry.host))/devops/ci-tools
+      aws_access_key_id: ((prod-cloud.docker-registry.aws_access_key_id))
+      aws_secret_access_key: ((prod-cloud.docker-registry.aws_secret_access_key))
+      tag: latest
+  - name: midnight-and-noon-utc
+    type: time
+    source:
+      start: 00:00
+      stop: 12:30
+      interval: 12h
+      location: UTC
+  - name: team-alert
+    type: slack-alert
+    source:
+      url: ((prod-cloud.slack-alert.url))
+      channel: prod-ci
+      concourse_url: ((prod-cloud.ci.url))
+      # Concourse Team Login
+      username: ((prod-cloud.ci.team.platform.username))
+      password: ((prod-cloud.ci.team.platform.password))
+  - name: general-alert
+    type: slack-alert
+    source:
+      url: ((prod-cloud.slack-alert.url))
+      channel: _general
+      concourse_url: ((prod-cloud.ci.url))
+      # Concourse Team Login
+      username: ((prod-cloud.ci.team.platform.username))
+      password: ((prod-cloud.ci.team.platform.password))
+
+resource_types:
+  - name: slack-alert
+    type: docker-image
+    source:
+      repository: arbourd/concourse-slack-alert-resource

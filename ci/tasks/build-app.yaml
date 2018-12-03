@@ -1,0 +1,19 @@
+platform: linux
+inputs:
+  - name: app-prepared
+outputs:
+  - name: app-build
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      set -ex
+      cwd="$(pwd)"
+      cd app-prepared
+        npm run prod:build -- --progress false
+      cd "${cwd}"
+      cp -fa app-prepared/Dockerfile app-build/
+      cp -fa app-prepared/dist/ app-build/
+      mkdir -p app-build/.git/
+      cp -fa app-prepared/.git/ref app-build/.git/

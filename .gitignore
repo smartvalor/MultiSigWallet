@@ -75,3 +75,9 @@ dapp/localhost.key
 
 # Travis
 .travis/deploy_key
+/.blackbox/pubring.gpg~
+/.blackbox/pubring.kbx~
+/.blackbox/secring.gpg
+/.blackbox-prod/pubring.gpg~
+/.blackbox-prod/pubring.kbx~
+/.blackbox-prod/secring.gpg

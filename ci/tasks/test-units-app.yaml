@@ -1,0 +1,13 @@
+platform: linux
+inputs:
+  - name: app-prepared
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      set -ex
+      cwd="$(pwd)"
+      cd app-prepared
+        npm run test:units -- --progress false
+      cd "${cwd}"

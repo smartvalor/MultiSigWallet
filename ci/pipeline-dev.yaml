@@ -1,0 +1,261 @@
+groups:
+  - name: All
+    jobs:
+      - pr-check
+      - build-app-image
+      - deploy-uat
+  - name: Development
+    jobs:
+      - pr-check
+  - name: Build
+    jobs:
+      - build-app-image
+  - name: Dev Cloud
+    jobs:
+      - deploy-uat
+jobs:
+  - name: pr-check
+    max_in_flight: 2
+    on_success:
+      put: multisigwallet-repo-pr
+      params:
+        path: multisigwallet-repo-pr
+        context: $BUILD_JOB_NAME
+        status: success
+    on_failure:
+      put: multisigwallet-repo-pr
+      params:
+        path: multisigwallet-repo-pr
+        context: $BUILD_JOB_NAME
+        status: failure
+    plan:
+      - aggregate:
+          - get: multisigwallet-repo-pr
+            params:
+              git.depth: 1
+            trigger: true
+            version: every
+          - get: base-image
+            trigger: true
+      - put: multisigwallet-repo-pr
+        params:
+          path: multisigwallet-repo-pr
+          context: $BUILD_JOB_NAME
+          status: pending
+      - task: prepare-app
+        image: base-image
+        file: multisigwallet-repo-pr/ci/tasks/prepare-app.yaml
+        input_mapping:
+          app-repo: multisigwallet-repo-pr
+      - task: lint-app
+        image: base-image
+        file: multisigwallet-repo-pr/ci/tasks/lint-app.yaml
+      - task: test-build-app
+        image: base-image
+        file: multisigwallet-repo-pr/ci/tasks/test-build-app.yaml
+  - name: build-app-image
+    serial: true
+#    on_success:
+#      <<: &slack-alerts-on-success
+#        aggregate:
+#          - put: team-alert
+#            params:
+#              alert_type: success
+#          - put: general-alert
+#            params:
+#              alert_type: fixed
+#    on_failure:
+#      <<: &slack-alerts-on-failure
+#        aggregate:
+#          - put: team-alert
+#            params:
+#              alert_type: failed
+#          - put: general-alert
+#            params:
+#              alert_type: broke
+#    on_abort:
+#      <<: &slack-alerts-on-abort
+#        aggregate:
+#          - put: team-alert
+#            params:
+#              alert_type: aborted
+#          - put: general-alert
+#            params:
+#              alert_type: broke
+    plan:
+      - aggregate:
+          - get: multisigwallet-repo
+            params:
+              depth: 1
+              clean_tags: true
+            trigger: true
+          - get: base-image
+            params:
+              save: true
+            trigger: true
+          - get: ci-tools
+      - task: prepare-app
+        image: base-image
+        file: multisigwallet-repo/ci/tasks/prepare-app.yaml
+        input_mapping:
+          app-repo: multisigwallet-repo
+      - task: build-app
+        image: base-image
+        file: multisigwallet-repo/ci/tasks/build-app.yaml
+      - <<: &docker-image-tags
+          task: docker-image-tags
+          image: ci-tools
+          file: ci-tools/rootfs/ci-tasks/docker-image-tags.yaml
+          params:
+            TAG: build-latest
+            ADDITIONAL_TAGS: build-latest build-UTC_DATETIME
+      - put: multisigwallet-image
+        params:
+          load_base: base-image
+          build: app-build
+          tag: multisigwallet-repo/.git/ref
+          tag_as_latest: true
+          additional_tags: docker-image-tags/additional_tags
+          get_params:
+            skip_download: true
+      - <<: &put-multisigwallet-repo-tag
+          put: multisigwallet-repo
+          params:
+            repository: multisigwallet-repo
+            force: true
+            tag: docker-image-tags/tag
+            only_tag: true
+  - name: deploy-uat
+    serial: true
+#    on_success:
+#      <<: *slack-alerts-on-success
+#    on_failure:
+#      <<: *slack-alerts-on-failure
+#    on_abort:
+#      <<: *slack-alerts-on-abort
+    plan:
+      - aggregate:
+          - get: multisigwallet-image
+            params:
+              save: true
+            <<: &deploy-uat-require-passed
+              passed:
+                - build-app-image
+            trigger: true
+          - get: multisigwallet-repo
+            params:
+              clean_tags: true
+            <<: *deploy-uat-require-passed
+          - get: ci-tools
+      - <<: &repo-checkout-image-ref
+          task: repo-checkout-ref
+          image: ci-tools
+          file: ci-tools/rootfs/ci-tasks/repo-checkout-ref.yaml
+          params:
+            repo_ref_file: rootfs/.app-version/ref
+          input_mapping:
+            repo: multisigwallet-repo
+            image: multisigwallet-image
+          output_mapping:
+            repo-checkout-ref: multisigwallet-repo
+      - <<: &require-image-and-repo-ref-match
+          task: require-image-and-repo-ref-match
+          image: ci-tools
+          file: ci-tools/rootfs/ci-tasks/require-image-and-repo-ref-match.yaml
+          input_mapping:
+            app-repo: multisigwallet-repo
+            app-image: multisigwallet-image
+      - task: helm-upsert
+        image: ci-tools
+        file: ci-tools/rootfs/ci-tasks/helm-upsert.yaml
+        input_mapping:
+          app-repo: multisigwallet-repo
+          app-image: multisigwallet-image
+        params:
+          GNUPG_PRIVATE_KEY: ((dev-cloud.ci-bot.gpg.private-key))
+          BLACKBOXDATA: .blackbox
+          AWS_ACCESS_KEY_ID: ((dev-cloud.aws.access_key_id))
+          AWS_SECRET_ACCESS_KEY: ((dev-cloud.aws.secret_access_key))
+          AWS_DEFAULT_REGION: ((dev-cloud.aws.default-region))
+          KOPS_STATE_STORE: ((dev-cloud.s3-kops-store))
+          KOPS_CLUSTER_NAME: ((dev-cloud.dev.kops-cluster-name))
+          NAMESPACE: ((dev-cloud.dev.kubernetes-namespace))
+          RELEASE_NAME: uat-multisigwallet
+          CHART_NAME: multisigwallet
+          APP_ENV: dev
+      - <<: *docker-image-tags
+        params:
+          TAG: uat-latest
+          ADDITIONAL_TAGS: uat-UTC_DATETIME
+      - <<: &put-multisigwallet-image
+          put: multisigwallet-image
+          params:
+            load: multisigwallet-image
+            tag: docker-image-tags/tag
+            additional_tags: docker-image-tags/additional_tags
+            get_params:
+              skip_download: true
+
+resources:
+  - name: multisigwallet-repo
+    type: git
+    source:
+      uri: git@github.com:smartvalor/MultiSigWallet.git
+      branch: master
+      private_key: ((dev-cloud.ci-bot.github.git-key))
+  - name: multisigwallet-repo-pr
+    type: pull-request
+    source:
+      uri: git@github.com:smartvalor/MultiSigWallet.git
+      repo: smartvalor/MultiSigWallet
+      access_token: ((dev-cloud.ci-bot.github.access_token))
+      private_key: ((dev-cloud.ci-bot.github.git-key))
+      only_mergeable: true
+      label: work done
+      ci_skip: true
+  - name: multisigwallet-image
+    type: docker-image
+    source:
+      repository: ((dev-cloud.docker-registry.host))/multisigwallet
+      aws_access_key_id: ((dev-cloud.docker-registry.aws_access_key_id))
+      aws_secret_access_key: ((dev-cloud.docker-registry.aws_secret_access_key))
+  - name: ci-tools
+    type: docker-image
+    source:
+      repository: ((dev-cloud.docker-registry.host))/devops/ci-tools
+      aws_access_key_id: ((dev-cloud.docker-registry.aws_access_key_id))
+      aws_secret_access_key: ((dev-cloud.docker-registry.aws_secret_access_key))
+      tag: latest
+  - name: base-image
+    type: docker-image
+    source:
+      repository: node
+      tag: 10-alpine
+#  - name: team-alert
+#    type: slack-alert
+#    source:
+#      url: ((dev-cloud.slack-alert.url))
+#      channel: dev-ci
+#      concourse_url: ((dev-cloud.ci.url))
+#      # Concourse Team Login
+#      username: ((dev-cloud.ci.team.platform.username))
+#      password: ((dev-cloud.ci.team.platform.password))
+#  - name: general-alert
+#    type: slack-alert
+#    source:
+#      url: ((dev-cloud.slack-alert.url))
+#      channel: _general
+#      concourse_url: ((dev-cloud.ci.url))
+#      # Concourse Team Login
+#      username: ((dev-cloud.ci.team.platform.username))
+#      password: ((dev-cloud.ci.team.platform.password))
+
+resource_types:
+#  - name: slack-alert
+#    type: docker-image
+#    source:
+#      repository: arbourd/concourse-slack-alert-resource
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
