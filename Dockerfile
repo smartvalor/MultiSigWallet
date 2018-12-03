@@ -6,10 +6,8 @@ WORKDIR /srv/app
 ADD .git /.app-version
 ADD . /srv/app
 
-RUN ls -al /srv/app/dapp/
-
 EXPOSE 8282
 
 USER node
 
-CMD ["./bin/grunt"]
+CMD ["./dapp/node_modules/.bin/grunt"]
