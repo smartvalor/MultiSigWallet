@@ -4,7 +4,7 @@ LABEL maintainer="smartvalor.com"
 WORKDIR /srv/app
 
 ADD .git /.app-version
-ADD .
+ADD . /srv/app
 
 EXPOSE 8282
 
