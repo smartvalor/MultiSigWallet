@@ -12,4 +12,4 @@ EXPOSE 8282
 
 USER node
 
-CMD [".bin/grunt"]
+CMD ["./bin/grunt"]
