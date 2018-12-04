@@ -27,7 +27,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["ls", "-l"]
           ports:
             - name: multisigwallet
               containerPort: 8282
@@ -35,7 +34,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: http
+              port: multisigwallet
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
@@ -43,7 +42,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: http
+              port: multisigwallet
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
