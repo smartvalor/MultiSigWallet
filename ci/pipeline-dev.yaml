@@ -46,10 +46,7 @@ jobs:
         image: base-image
         file: multisigwallet-repo/ci/tasks/build-app.yaml
         input_mapping:
-          app-repo: multisigwallet-repo
-      - task: lint-app
-        image: base-image
-        file: multisigwallet-repo-pr/ci/tasks/lint-app.yaml
+          app-repo: multisigwallet-repo-pr
       - task: test-build-app
         image: base-image
         file: multisigwallet-repo-pr/ci/tasks/test-build-app.yaml
