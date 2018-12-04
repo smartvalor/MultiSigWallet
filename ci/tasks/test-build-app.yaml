@@ -1,6 +1,6 @@
 platform: linux
 inputs:
-  - name: app-repo
+  - name: app-build
 outputs:
   - name: app-test-build
 run:
@@ -15,7 +15,7 @@ run:
         npm test
         npm run test-dapp
       cd "${cwd}"
-      cp -fa app-repo/Dockerfile app-test-build/
-      cp -fa app-repo/dist/ app-test-build/
+      cp -fa app-build/Dockerfile app-test-build/
+      cp -fa app-build/dist/ app-test-build/
       mkdir -p repo/.git/
       cp -fa repo/.git/head_sha app-test-build/.git/ref
