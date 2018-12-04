@@ -4,7 +4,7 @@ LABEL maintainer="smartvalor.com"
 ADD .git /.app-version
 ADD . /srv/app
 
-RUN chown -R node:node
+RUN chown -R node:node /srv/app
 
 WORKDIR /srv/app/dapp
 
