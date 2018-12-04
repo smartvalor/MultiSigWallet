@@ -21,4 +21,4 @@ run:
       cp -fa app-repo/Dockerfile app-build/
       cp -fa app-repo/dapp/ app-build/
       mkdir -p app-build/.git/
-      cp -fa app-build/.git/ref app-build/.git/
+      cp -fa app-repo/.git/ref app-build/.git/
