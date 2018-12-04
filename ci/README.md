@@ -3,7 +3,7 @@
 ## Dev CI
 
 ```bash
-fly -t dev-ci set-pipeline -p blockchain \
+fly -t dev-ci set-pipeline \
 -p multisigwallet \
 -c ci/pipeline-dev.yaml \
 -l <(cd ../sv-k8s-infrastructure && blackbox_cat ci/values/dev-cloud.yaml.gpg)

@@ -192,6 +192,7 @@ jobs:
             additional_tags: docker-image-tags/additional_tags
             get_params:
               skip_download: true
+      - <<: *put-multisigwallet-repo-tag
 
 resources:
   - name: multisigwallet-repo
