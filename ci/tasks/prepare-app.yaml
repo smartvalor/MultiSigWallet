@@ -2,7 +2,7 @@ platform: linux
 inputs:
   - name: app-repo
 outputs:
-  - name: app-build
+  - name: app-prepared
 caches:
   - path: .npm
 run:
@@ -18,7 +18,7 @@ run:
       cd app-repo
         npm install
       cd $cwd
-      cp -fa app-repo/Dockerfile app-build/
-      cp -fa app-repo/dapp/ app-build/
-      mkdir -p app-build/.git/
-      cp -fa app-repo/.git/ref app-build/.git/
+      cp -fa app-repo/Dockerfile app-prepared/
+      cp -fa app-repo/dapp/ app-prepared/
+      mkdir -p app-prepared/.git/
+      cp -fa app-repo/.git/head_sha app-prepared/.git/ref

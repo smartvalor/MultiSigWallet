@@ -42,9 +42,9 @@ jobs:
           path: multisigwallet-repo-pr
           context: $BUILD_JOB_NAME
           status: pending
-      - task: build-app
+      - task: prepare-app
         image: base-image
-        file: multisigwallet-repo-pr/ci/tasks/build-app.yaml
+        file: multisigwallet-repo-pr/ci/tasks/prepare-app.yaml
         input_mapping:
           app-repo: multisigwallet-repo-pr
       - task: test-build-app
