@@ -11,14 +11,11 @@ run:
     - -c
     - |
       set -ex
-      cwd="$(pwd)"
-      export npm_config_cache=".npm"
-      npm set progress=false
+      cp -faT app-repo app-prepared
+      export npm_config_cache="$(pwd)/.npm"
       npm set unsafe-perm true
-      cd app-repo
+      npm set progress=false
+      cwd="$(pwd)"
+      cd app-prepared
         npm install
-      cd $cwd
-      cp -fa app-repo/Dockerfile app-prepared/
-      cp -fa app-repo/dapp/ app-prepared/
-      mkdir -p app-prepared/.git/
-      cp -fa app-repo/.git/head_sha app-prepared/.git/ref
+      cd "${cwd}"
