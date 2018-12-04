@@ -1,21 +1,24 @@
 platform: linux
 inputs:
-  - name: app-build
+  - name: app-repo
 outputs:
-  - name: app-test-build
+  - name: app-build
+caches:
+  - path: .npm
 run:
   path: sh
   args:
     - -c
     - |
       set -ex
-      echo "test app xxx"
       cwd="$(pwd)"
-      cd app-prepared
-        npm test
-        npm run test-dapp
-      cd "${cwd}"
-      cp -fa app-build/Dockerfile app-test-build/
-      cp -fa app-build/dist/ app-test-build/
-      mkdir -p repo/.git/
-      cp -fa repo/.git/head_sha app-test-build/.git/ref
+      export npm_config_cache=".npm"
+      npm set progress=false
+      npm set unsafe-perm true
+      cd app-repo
+        npm install
+      cd $cwd
+      cp -fa app-repo/Dockerfile app-build/
+      cp -fa app-repo/dapp/ app-build/
+      mkdir -p app-build/.git/
+      cp -fa app-repo/.git/ref app-build/.git/
