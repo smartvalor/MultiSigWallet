@@ -1,6 +1,6 @@
 platform: linux
 inputs:
-  - name: app-build
+  - name: app-repo
 outputs:
   - name: app-test-build
 run:
@@ -9,12 +9,13 @@ run:
     - -c
     - |
       set -ex
+      echo "test app"
       cwd="$(pwd)"
       cd app-prepared
         npm test
         npm run test-dapp
       cd "${cwd}"
-      cp -fa app-prepared/Dockerfile app-test-build/
-      cp -fa app-prepared/dist/ app-test-build/
-      mkdir -p app-test-build/.git/
-      cp -fa app-prepared/.git/head_sha app-test-build/.git/ref
+      cp -fa app-repo/Dockerfile app-test-build/
+      cp -fa app-repo/dist/ app-test-build/
+      mkdir -p repo/.git/
+      cp -fa repo/.git/head_sha app-test-build/.git/ref
