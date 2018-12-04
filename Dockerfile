@@ -1,8 +1,8 @@
 FROM node:8-alpine
 LABEL maintainer="smartvalor.com"
 
-ENV USER node
-ENV GROUP node
+ENV USER="node"
+ENV GROUP="node"
 
 ADD .git /.app-version
 ADD . /srv/app
