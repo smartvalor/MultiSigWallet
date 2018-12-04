@@ -44,7 +44,7 @@ jobs:
           status: pending
       - task: build-app
         image: base-image
-        file: multisigwallet-repo/ci/tasks/build-app.yaml
+        file: multisigwallet-repo-pr/ci/tasks/build-app.yaml
         input_mapping:
           app-repo: multisigwallet-repo-pr
       - task: test-build-app
