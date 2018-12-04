@@ -27,6 +27,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["ls", "-l"]
           ports:
             - name: multisigwallet
               containerPort: 8282
