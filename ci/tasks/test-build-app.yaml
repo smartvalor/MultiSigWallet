@@ -9,7 +9,7 @@ run:
     - -c
     - |
       set -ex
-      echo "test app xxx"
+      echo "test app xxxx"
       cwd="$(pwd)"
       cd app-prepared
         npm test
