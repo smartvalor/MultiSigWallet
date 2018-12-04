@@ -1,6 +1,6 @@
 platform: linux
 inputs:
-  - name: app-prepared
+  - name: app-build
 outputs:
   - name: app-test-build
 run:
@@ -11,7 +11,8 @@ run:
       set -ex
       cwd="$(pwd)"
       cd app-prepared
-        npm run test:build -- --progress false
+        npm test
+        npm run test-dapp
       cd "${cwd}"
       cp -fa app-prepared/Dockerfile app-test-build/
       cp -fa app-prepared/dist/ app-test-build/
